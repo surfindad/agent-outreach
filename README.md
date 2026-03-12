@@ -1,1 +1,1875 @@
-# agent-outreach
+# agent-outreach<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Evolution Accelerator -- Outreach CRM</title>
+<style>
+:root {
+  --bg:     #000000;
+  --panel:  #111111;
+  --card:   #111111;
+  --border: #1E1E1E;
+  --mid:    #333333;
+  --hover:  #444444;
+  --input:  #0A0A0A;
+  --copper: #C87530;
+  --teal:   #2AACBF;
+  --sand:   #F0DDBA;
+  --green:  #4E9160;
+  --red:    #C0532A;
+  --purple: #8B5CF6;
+  --gold:   #F59E0B;
+  --mgray:  #A09278;
+  --t1bg:   #1A0A00;
+  --t2bg:   #021A20;
+  --t3bg:   #071A0E;
+  --t4bg:   #12082A;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: Arial, sans-serif; background: var(--bg); color: var(--sand); min-height: 100vh; }
+
+/* ── TABS ── */
+.tab-bar {
+  background: var(--panel);
+  border-bottom: 3px solid var(--copper);
+  padding: 0 24px;
+  display: flex; align-items: flex-end; justify-content: space-between;
+}
+.tab-left { display: flex; align-items: flex-end; gap: 0; }
+.tab-title { padding: 14px 0; }
+.tab-title h1 { font-size: 17px; color: var(--copper); letter-spacing: 1px; font-weight: 700; }
+.tab-title p  { font-size: 10px; color: var(--mgray); margin-top: 2px; }
+.tab-divider  { width: 1px; background: var(--border); margin: 10px 16px; }
+.tab-btn {
+  padding: 14px 22px; font-size: 13px; font-weight: 700;
+  color: var(--mgray); cursor: pointer; border: none;
+  background: transparent; border-bottom: 3px solid transparent;
+  margin-bottom: -3px; letter-spacing: 0.5px; transition: color 0.15s;
+}
+.tab-btn:hover { color: var(--sand); }
+.tab-btn.active-agent    { color: var(--copper); border-bottom-color: var(--copper); }
+.tab-btn.active-investor { color: var(--teal);  border-bottom-color: var(--teal); }
+.tab-right { font-size: 11px; color: var(--mgray); padding-bottom: 14px; text-align: right; }
+.tab-right strong { color: var(--sand); }
+
+/* ── STATS ── */
+.stats-bar {
+  background: var(--panel); border-bottom: 1px solid var(--border);
+  padding: 12px 24px; display: flex; gap: 14px; flex-wrap: wrap; align-items: center;
+}
+.stat-chip {
+  background: var(--border); border: 1px solid var(--mid); border-radius: 20px;
+  padding: 5px 14px; font-size: 12px; color: var(--mgray); white-space: nowrap;
+}
+.stat-chip strong          { color: var(--copper); font-size: 15px; margin-right: 4px; }
+.stat-chip.teal   strong   { color: var(--teal); }
+.stat-chip.green  strong   { color: var(--green); }
+.stat-chip.purple strong   { color: var(--purple); }
+.stat-chip.sand   strong   { color: var(--sand); }
+.stat-chip.gold   strong   { color: var(--gold); }
+.stat-chip.red    strong   { color: var(--red); }
+
+/* ── PIPELINE ── */
+.pipeline-bar {
+  background: var(--panel); border-bottom: 2px solid var(--border);
+  padding: 10px 24px; display: flex; gap: 8px; align-items: center; flex-wrap: wrap;
+}
+.pipe-item  { display: flex; align-items: center; gap: 5px; font-size: 11px; color: var(--mgray); }
+.pipe-dot   { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+.pipe-label { color: var(--sand); font-weight: 600; margin-right: 2px; }
+.pipe-sep   { color: var(--border); font-size: 16px; }
+
+/* ── TIER LEGEND ── */
+.tier-legend {
+  background: var(--panel); border-bottom: 1px solid var(--border);
+  padding: 8px 24px; display: flex; gap: 20px; flex-wrap: wrap; align-items: center;
+}
+.legend-item { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--mgray); }
+.legend-badge {
+  width: 22px; height: 22px; border-radius: 5px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 9px; font-weight: 700;
+}
+
+/* ── CONTROLS ── */
+.controls {
+  background: var(--panel); border-bottom: 1px solid var(--border);
+  padding: 12px 24px; display: flex; gap: 10px; align-items: center; flex-wrap: wrap;
+}
+.controls input[type="text"] {
+  background: var(--border); border: 1px solid var(--mid); border-radius: 6px;
+  padding: 8px 14px; color: var(--sand); font-size: 13px; width: 200px; outline: none;
+}
+.controls input[type="text"]::placeholder { color: var(--mgray); }
+.controls input[type="text"]:focus { border-color: var(--copper); }
+.controls select {
+  background: var(--border); border: 1px solid var(--mid); border-radius: 6px;
+  padding: 8px 14px; color: var(--sand); font-size: 13px; outline: none; cursor: pointer;
+}
+.controls select:focus { border-color: var(--copper); }
+.btn {
+  padding: 8px 16px; border-radius: 6px; border: none;
+  font-size: 13px; font-weight: 600; cursor: pointer; transition: opacity 0.2s;
+}
+.btn:hover { opacity: 0.85; }
+.btn-copper  { background: var(--copper); color: #000; }
+.btn-teal    { background: var(--teal); color: #000; }
+.btn-green   { background: var(--green); color: #fff; }
+.btn-red     { background: var(--red); color: #fff; }
+.btn-outline { background: transparent; border: 1px solid var(--mid); color: var(--mgray); }
+.btn-outline:hover { border-color: var(--mgray); color: var(--sand); }
+.controls-right { margin-left: auto; display: flex; gap: 8px; }
+.count-label {
+  padding: 4px 12px; font-size: 11px; color: var(--mgray);
+  border-left: 1px solid var(--border); margin-left: 4px;
+}
+.count-label strong { color: var(--copper); }
+
+/* ── FOLLOW-UP ALERT BAR ── */
+.followup-bar {
+  background: #1A0800; border-bottom: 1px solid #3A1A00;
+  padding: 8px 24px; display: flex; gap: 12px; align-items: center; flex-wrap: wrap;
+}
+.fu-chip {
+  border-radius: 14px; padding: 4px 12px; font-size: 11px; font-weight: 600; cursor: pointer;
+}
+.fu-chip.orange { background: #3A1A00; border: 1px solid var(--copper); color: var(--copper); }
+.fu-chip.red    { background: #2A0800; border: 1px solid var(--red); color: var(--red); }
+.fu-chip:hover  { opacity: 0.8; }
+
+/* ── GRID ── */
+.grid-wrap { padding: 20px 24px; }
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 14px;
+}
+.no-results {
+  text-align: center; color: var(--mgray); padding: 60px 20px;
+  font-size: 15px; grid-column: 1 / -1;
+}
+
+/* ── CARD ── */
+.card {
+  background: var(--card); border: 1px solid var(--border); border-radius: 10px;
+  padding: 16px; transition: border-color 0.2s, transform 0.1s; position: relative;
+}
+.card:hover  { border-color: var(--hover); transform: translateY(-1px); }
+.card.is-custom { border-color: #0F2010; }
+.card.fu-due    { border-color: var(--copper) !important; }
+.card.fu-urgent { border-color: var(--red) !important; }
+
+.card-top { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 10px; }
+.tier-badge {
+  flex-shrink: 0; width: 36px; height: 36px; border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 700; letter-spacing: 0.5px;
+}
+.tier-1  { background: var(--t1bg); border: 1px solid var(--copper); color: var(--copper); }
+.tier-2  { background: var(--t2bg); border: 1px solid var(--teal); color: var(--teal); }
+.tier-3  { background: var(--t3bg); border: 1px solid var(--green); color: var(--green); }
+.tier-4  { background: var(--t4bg); border: 1px solid var(--purple); color: var(--purple); }
+.tier-vc { background: #0A1A2E; border: 1px solid var(--teal); color: var(--teal); }
+
+.card-name      { font-size: 14px; font-weight: 700; color: var(--sand); line-height: 1.3; }
+.card-sub       { font-size: 11px; color: var(--mgray); margin-top: 3px; line-height: 1.4; }
+.custom-tag     { font-size: 9px; background: #0F2010; color: var(--green); border-radius: 3px; padding: 1px 5px; margin-left: 6px; vertical-align: middle; }
+
+/* Follow-up badge on card */
+.fu-badge {
+  display: inline-block; font-size: 9px; font-weight: 700; border-radius: 3px;
+  padding: 2px 6px; margin-left: 6px; vertical-align: middle;
+}
+.fu-badge.day3 { background: #3A1A00; color: var(--copper); border: 1px solid var(--copper); }
+.fu-badge.day7 { background: #2A0800; color: var(--red); border: 1px solid var(--red); }
+
+.card-contact { display: flex; gap: 8px; margin: 8px 0; font-size: 11px; flex-wrap: wrap; }
+.contact-item { display: flex; align-items: center; gap: 4px; color: var(--mgray); }
+.contact-item a { color: var(--teal); text-decoration: none; }
+.contact-item a:hover { text-decoration: underline; }
+
+.status-row { display: flex; gap: 8px; align-items: center; margin: 10px 0 8px; }
+.status-label { font-size: 11px; color: var(--mgray); white-space: nowrap; }
+.status-select {
+  flex: 1; background: var(--border); border: 1px solid var(--mid); border-radius: 5px;
+  padding: 5px 8px; color: var(--sand); font-size: 12px; font-weight: 600;
+  outline: none; cursor: pointer;
+}
+.status-select:focus { border-color: var(--copper); }
+.status-select.s-none      { border-color: var(--mid); color: var(--mgray); }
+.status-select.s-sent      { border-color: var(--teal); color: var(--teal); }
+.status-select.s-replied   { border-color: var(--green); color: var(--green); }
+.status-select.s-booked    { border-color: var(--copper); color: var(--copper); }
+.status-select.s-converted { border-color: var(--sand); color: var(--sand); }
+.status-select.s-skip      { border-color: var(--mgray); color: var(--mgray); }
+.status-select.s-intro     { border-color: var(--teal); color: var(--teal); }
+.status-select.s-deck      { border-color: var(--purple); color: var(--purple); }
+.status-select.s-meeting   { border-color: var(--gold); color: var(--gold); }
+.status-select.s-dd        { border-color: var(--copper); color: var(--copper); }
+.status-select.s-closed    { border-color: var(--sand); color: var(--sand); }
+.status-select.s-pass      { border-color: var(--mgray); color: var(--mgray); }
+
+.status-indicator {
+  position: absolute; top: 12px; right: 12px;
+  width: 9px; height: 9px; border-radius: 50%;
+}
+.notes-wrap { margin-top: 6px; }
+.notes-input {
+  width: 100%; background: var(--input); border: 1px solid var(--border); border-radius: 5px;
+  padding: 6px 10px; color: var(--mgray); font-size: 11px; font-family: Arial, sans-serif;
+  resize: none; height: 48px; outline: none; transition: border-color 0.2s;
+}
+.notes-input::placeholder { color: #3A3A3A; }
+.notes-input:focus { border-color: var(--copper); color: var(--sand); }
+.sent-row { display: flex; gap: 6px; align-items: center; margin-top: 6px; }
+.sent-label { font-size: 10px; color: var(--mgray); white-space: nowrap; }
+.sent-input {
+  flex: 1; background: var(--input); border: 1px solid var(--border); border-radius: 4px;
+  padding: 4px 7px; color: var(--mgray); font-size: 10px; font-family: Arial, sans-serif; outline: none;
+}
+.sent-input:focus { border-color: var(--copper); color: var(--sand); }
+.card-actions { display: flex; gap: 6px; margin-top: 10px; }
+.act-btn {
+  flex: 1; padding: 6px 0; border-radius: 5px; border: 1px solid var(--border);
+  background: transparent; color: var(--mgray); font-size: 11px; cursor: pointer;
+  transition: all 0.15s; text-align: center;
+  display: flex; align-items: center; justify-content: center;
+}
+.act-btn:hover           { background: var(--border); color: var(--sand); }
+.act-btn.email-btn:hover { border-color: var(--teal); color: var(--teal); }
+.act-btn.phone-btn:hover { border-color: var(--green); color: var(--green); }
+.act-btn.web-btn:hover   { border-color: var(--copper); color: var(--copper); }
+.act-btn.del-btn:hover   { border-color: var(--red); color: var(--red); }
+.act-btn.dimmed { opacity: 0.3; pointer-events: none; }
+
+/* ── MODALS ── */
+.modal-overlay {
+  display: none; position: fixed; inset: 0;
+  background: rgba(0,0,0,0.85); z-index: 1000;
+  align-items: center; justify-content: center; padding: 20px;
+}
+.modal-overlay.open { display: flex; }
+.modal {
+  background: var(--panel); border: 1px solid var(--copper); border-radius: 12px;
+  width: 100%; max-width: 620px; max-height: 90vh; overflow-y: auto; padding: 28px;
+}
+.modal.narrow { max-width: 500px; }
+.modal h2 { font-size: 16px; color: var(--copper); margin-bottom: 4px; }
+.modal h3 { font-size: 13px; color: var(--mgray); font-weight: 400; margin-bottom: 18px; }
+.modal-field { margin-bottom: 14px; }
+.modal-field label {
+  display: block; font-size: 11px; color: var(--mgray);
+  margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.5px;
+}
+.modal-field input,
+.modal-field select,
+.modal-field textarea {
+  width: 100%; background: var(--input); border: 1px solid var(--border); border-radius: 6px;
+  padding: 8px 12px; color: var(--sand); font-size: 13px; font-family: Arial, sans-serif; outline: none;
+}
+.modal-field textarea { resize: vertical; height: 260px; line-height: 1.6; }
+.modal-field input:focus,
+.modal-field select:focus,
+.modal-field textarea:focus { border-color: var(--copper); }
+.modal-field select { cursor: pointer; }
+.modal-actions { display: flex; gap: 10px; margin-top: 20px; justify-content: flex-end; }
+.modal-note {
+  font-size: 11px; color: var(--mgray); margin-top: 14px; line-height: 1.5;
+  padding: 10px; background: var(--input); border-radius: 6px;
+}
+.template-row {
+  display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap;
+}
+.tpl-btn {
+  padding: 5px 12px; border-radius: 5px; border: 1px solid var(--mid);
+  background: transparent; color: var(--mgray); font-size: 11px; cursor: pointer; transition: all 0.15s;
+}
+.tpl-btn:hover  { border-color: var(--copper); color: var(--copper); }
+.tpl-btn.active { background: var(--border); border-color: var(--copper); color: var(--copper); font-weight: 700; }
+.field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.error-msg { color: var(--red); font-size: 12px; margin-top: 8px; display: none; }
+.error-msg.show { display: block; }
+
+/* ── CONFIRM ── */
+.confirm-modal {
+  display: none; position: fixed; inset: 0;
+  background: rgba(0,0,0,0.85); z-index: 1100;
+  align-items: center; justify-content: center;
+}
+.confirm-modal.open { display: flex; }
+.confirm-box {
+  background: var(--panel); border: 1px solid var(--copper); border-radius: 10px;
+  padding: 24px 28px; max-width: 380px; width: 90%; text-align: center;
+}
+.confirm-box h3 { color: var(--copper); margin-bottom: 10px; font-size: 15px; }
+.confirm-box p  { color: var(--mgray); font-size: 13px; margin-bottom: 20px; line-height: 1.5; }
+.confirm-box .btn-row { display: flex; gap: 10px; justify-content: center; }
+
+/* ── HIDDEN ── */
+.hidden { display: none !important; }
+
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--mid); border-radius: 3px; }
+
+@media (max-width: 680px) {
+  .grid { grid-template-columns: 1fr; }
+  .controls { gap: 6px; }
+  .controls input[type="text"] { width: 100%; }
+  .field-row { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<script id="agent-data"    type="application/json">[
+  {
+    "tier": 1,
+    "name": "Beth Rider",
+    "brokerage": "Keller Williams – Rider Elite Team",
+    "phone": "602-315-8749",
+    "email": "bethrider@kw.com",
+    "website": "ridereliteteam.com"
+  },
+  {
+    "tier": 1,
+    "name": "Christopher Karas",
+    "brokerage": "Compass – The Karas Group",
+    "phone": "602-919-6511",
+    "email": "chris.karas@compass.com",
+    "website": "thekarasgroup.com"
+  },
+  {
+    "tier": 1,
+    "name": "Darren Tackett",
+    "brokerage": "eXp Realty – The Tackett Team",
+    "phone": "602-622-1226",
+    "email": "",
+    "website": "tackettteam.com"
+  },
+  {
+    "tier": 1,
+    "name": "Don & Jenny Matheson",
+    "brokerage": "RE/MAX Fine Properties – The Matheson Team",
+    "phone": "602-694-3200",
+    "email": "don@scottsdalerealestate.com",
+    "website": "scottsdalerealestate.com"
+  },
+  {
+    "tier": 1,
+    "name": "Frank Aazami",
+    "brokerage": "Russ Lyon Sotheby's / Compass",
+    "phone": "480-287-5200",
+    "email": "faazami@gmail.com",
+    "website": "russlyon.com"
+  },
+  {
+    "tier": 1,
+    "name": "James Wexler",
+    "brokerage": "Wexler Realty Group",
+    "phone": "480-221-8080",
+    "email": "James@JamesWexler.com",
+    "website": "wexlerrealestate.com"
+  },
+  {
+    "tier": 1,
+    "name": "Katrina Barrett",
+    "brokerage": "Walt Danley / Christie's Int'l RE",
+    "phone": "480-450-1518",
+    "email": "katrina@localluxuryre.com",
+    "website": "katrinabarrett.com"
+  },
+  {
+    "tier": 1,
+    "name": "Lisa Roberts",
+    "brokerage": "Russ Lyon Sotheby's International Realty",
+    "phone": "480-232-3291",
+    "email": "lisa.roberts@russlyon.com",
+    "website": "lisaroberts.com"
+  },
+  {
+    "tier": 1,
+    "name": "Max Shadle",
+    "brokerage": "Redfin",
+    "phone": "",
+    "email": "max.shadle@redfin.com",
+    "website": "redfin.com/real-estate-agents/max-shadle"
+  },
+  {
+    "tier": 1,
+    "name": "Mike Domer",
+    "brokerage": "Compass",
+    "phone": "480-861-8883",
+    "email": "mike.domer@compass.com",
+    "website": "mikedomer.com"
+  },
+  {
+    "tier": 1,
+    "name": "Robert Joffe",
+    "brokerage": "Compass – The Joffe Group",
+    "phone": "480-778-1555",
+    "email": "",
+    "website": "thejoffegroup.com"
+  },
+  {
+    "tier": 1,
+    "name": "Shalyn Kearney",
+    "brokerage": "Walt Danley / Christie's Int'l RE",
+    "phone": "321-689-0723",
+    "email": "",
+    "website": "waltdanley.com"
+  },
+  {
+    "tier": 1,
+    "name": "The Sibbach Team",
+    "brokerage": "eXp Realty",
+    "phone": "480-500-1738",
+    "email": "jeff@sibbach.com",
+    "website": "sibbach.com"
+  },
+  {
+    "tier": 1,
+    "name": "Walt Danley",
+    "brokerage": "Walt Danley / Christie's Int'l RE",
+    "phone": "480-991-2050",
+    "email": "walt@waltdanley.com",
+    "website": "waltdanley.com"
+  },
+  {
+    "tier": 1,
+    "name": "Wendy Walker",
+    "brokerage": "Compass – Wendy Walker Fine Properties",
+    "phone": "602-888-4162",
+    "email": "wendy@wwfineproperties.com",
+    "website": "wendywalkerfineproperties.com"
+  },
+  {
+    "tier": 2,
+    "name": "Adam Bowman",
+    "brokerage": "Compass",
+    "phone": "480-442-5210",
+    "email": "adam.bowman@compass.com",
+    "website": "compass.com/agents/adam-bowman"
+  },
+  {
+    "tier": 2,
+    "name": "Bobby Lieb",
+    "brokerage": "HomeSmart",
+    "phone": "602-999-7359",
+    "email": "bobby@homesmart.com",
+    "website": "homesmart.com/bobby-lieb"
+  },
+  {
+    "tier": 2,
+    "name": "Brock O'Neal",
+    "brokerage": "West USA Realty – O'Neal Team",
+    "phone": "480-518-8070",
+    "email": "brock@theonealteam.com",
+    "website": "theonealteam.com"
+  },
+  {
+    "tier": 2,
+    "name": "Bruno Arapovic",
+    "brokerage": "HomeSmart",
+    "phone": "602-677-5772",
+    "email": "bruno@brunosellsaz.com",
+    "website": "brunosellsaz.com"
+  },
+  {
+    "tier": 2,
+    "name": "Bryce Schotz",
+    "brokerage": "Compass – You Call The Schotz Team",
+    "phone": "480-540-5585",
+    "email": "bryce@bryceschotz.com",
+    "website": "bryceschotz.com"
+  },
+  {
+    "tier": 2,
+    "name": "Cindy Valadez",
+    "brokerage": "Integrity All Stars",
+    "phone": "480-415-3600",
+    "email": "cindy@cindysellsaz.homes",
+    "website": "cindysellsaz.homes"
+  },
+  {
+    "tier": 2,
+    "name": "Connie Colla",
+    "brokerage": "RETSY – Connie Colla Group",
+    "phone": "480-399-1570",
+    "email": "connie@conniecollagroup.com",
+    "website": "conniecollagroup.com"
+  },
+  {
+    "tier": 2,
+    "name": "Curtis Johnson",
+    "brokerage": "eXp Realty – The Curtis Johnson Team",
+    "phone": "602-456-9388",
+    "email": "curtis@thecurtisjohnsonteam.com",
+    "website": "thecurtisjohnsonteam.com"
+  },
+  {
+    "tier": 2,
+    "name": "David Newman",
+    "brokerage": "The Real Brokerage – David Newman Partners",
+    "phone": "480-291-1300",
+    "email": "david@davidnewmanpartners.com",
+    "website": "davidnewmanpartners.com"
+  },
+  {
+    "tier": 2,
+    "name": "Frank DiMaggio",
+    "brokerage": "The Agency Scottsdale",
+    "phone": "480-625-5997",
+    "email": "frank@theagencyre.com",
+    "website": "theagencyre.com"
+  },
+  {
+    "tier": 2,
+    "name": "Jason Penrose",
+    "brokerage": "eXp Realty – The Penrose Team",
+    "phone": "480-432-2532",
+    "email": "jason@jasonpenrose.com",
+    "website": "jasonpenrose.com"
+  },
+  {
+    "tier": 2,
+    "name": "John Gluch",
+    "brokerage": "eXp Realty – Gluch Group",
+    "phone": "602-456-5949",
+    "email": "john@johngluch.com",
+    "website": "johngluch.com"
+  },
+  {
+    "tier": 2,
+    "name": "Jordan Ayan",
+    "brokerage": "Compass – The Lifestyle Collection",
+    "phone": "480-695-6788",
+    "email": "jordan@compass.com",
+    "website": "compass.com"
+  },
+  {
+    "tier": 2,
+    "name": "Kelly Cook",
+    "brokerage": "Cook & Associates Real Estate Advisors",
+    "phone": "480-704-7444",
+    "email": "kelly@cookandassociatesaz.com",
+    "website": "cookandassociatesaz.com"
+  },
+  {
+    "tier": 2,
+    "name": "Kelly Jones",
+    "brokerage": "Elevation Group / Altman Brothers",
+    "phone": "602-316-8025",
+    "email": "kelly@kellyfjones.com",
+    "website": "kellyfjones.com"
+  },
+  {
+    "tier": 2,
+    "name": "Kim Panozzo",
+    "brokerage": "HomeSmart – The Panozzo Team",
+    "phone": "602-989-5329",
+    "email": "kim@myvalleyhomesearch.com",
+    "website": "myvalleyhomesearch.com"
+  },
+  {
+    "tier": 2,
+    "name": "Linda Salkow",
+    "brokerage": "SERHANT.",
+    "phone": "480-488-5055",
+    "email": "linda@desertmountainhomes.com",
+    "website": "desertmountainhomes.com"
+  },
+  {
+    "tier": 2,
+    "name": "Mario Romero",
+    "brokerage": "The Melcher Agency",
+    "phone": "480-688-4552",
+    "email": "mario@talktomario.com",
+    "website": "talktomario.com"
+  },
+  {
+    "tier": 2,
+    "name": "Mayra Reyes",
+    "brokerage": "Casa Mia Group / W and Partners",
+    "phone": "623-826-3838",
+    "email": "mayra@mayrareyesrealtor.com",
+    "website": "mayrareyesrealtor.com"
+  },
+  {
+    "tier": 2,
+    "name": "Phil Tibi",
+    "brokerage": "Compass – The Phil Tibi Group",
+    "phone": "602-320-8415",
+    "email": "phil@arizonabiltmorerealty.com",
+    "website": "arizonabiltmorerealty.com"
+  },
+  {
+    "tier": 2,
+    "name": "Raegen Johnson",
+    "brokerage": "Crestmark Realty – Raegen Johnson Group",
+    "phone": "602-326-5220",
+    "email": "raegen@raegenjohnsongroup.com",
+    "website": "raegenjohnsongroup.com"
+  },
+  {
+    "tier": 2,
+    "name": "Rebekah Liperote",
+    "brokerage": "Redfin",
+    "phone": "480-290-5226",
+    "email": "rebekah.liperote@redfin.com",
+    "website": "redfin.com"
+  },
+  {
+    "tier": 2,
+    "name": "Sacha Blanchet",
+    "brokerage": "Coldwell Banker Realty",
+    "phone": "480-220-6682",
+    "email": "sacha@sachablanchet.com",
+    "website": "sachablanchet.com"
+  },
+  {
+    "tier": 2,
+    "name": "Scott Grigg",
+    "brokerage": "The Grigg's Group / Altman Brothers",
+    "phone": "480-766-2882",
+    "email": "scott@grigggroup.com",
+    "website": "thealtmanbrothersgriggsaz.com"
+  },
+  {
+    "tier": 2,
+    "name": "Scott Kumler",
+    "brokerage": "eXp Realty – The Kumler Group",
+    "phone": "480-382-1111",
+    "email": "scott@kumlergroup.com",
+    "website": "kumlergroup.com"
+  },
+  {
+    "tier": 2,
+    "name": "The Lucky Team",
+    "brokerage": "Russ Lyon Sotheby's – Lisa, Matt & Laura Lucky",
+    "phone": "480-710-3777",
+    "email": "lisa@lisalucky.com",
+    "website": "lisalucky.com"
+  },
+  {
+    "tier": 2,
+    "name": "Thomas Osterman",
+    "brokerage": "Realty Executives",
+    "phone": "602-418-5000",
+    "email": "thomas@ostermanrealestate.com",
+    "website": "ostermanrealestate.com"
+  },
+  {
+    "tier": 2,
+    "name": "Tiffany Carlson-Richison",
+    "brokerage": "Realty ONE Group",
+    "phone": "480-706-1444",
+    "email": "tiffany@tlcrealestatepros.com",
+    "website": "tlcrealestatepros.com"
+  },
+  {
+    "tier": 2,
+    "name": "Vikki Gorman",
+    "brokerage": "Fathom Realty Elite",
+    "phone": "480-688-3338",
+    "email": "vikki@vikkigorman.com",
+    "website": "vikkigorman.com"
+  },
+  {
+    "tier": 3,
+    "name": "Brian Bouterie",
+    "brokerage": "Realty Executives Uptown",
+    "phone": "602-339-3357",
+    "email": "brianbouterie@realtyexecutives.com",
+    "website": "realtyexecutives.com"
+  },
+  {
+    "tier": 3,
+    "name": "Cheryl Anderson",
+    "brokerage": "Russ Lyon Sotheby's International Realty",
+    "phone": "602-312-6038",
+    "email": "cheryl.anderson@russlyon.com",
+    "website": "cherylanderson.com"
+  },
+  {
+    "tier": 3,
+    "name": "Christine Labelle",
+    "brokerage": "Compass – Team Labelle",
+    "phone": "602-740-5712",
+    "email": "",
+    "website": "teamlabelleaz.com"
+  },
+  {
+    "tier": 3,
+    "name": "Cionne McCarthy",
+    "brokerage": "Russ Lyon Sotheby's International Realty",
+    "phone": "602-619-4550",
+    "email": "cionne.mccarthy@russlyon.com",
+    "website": "cionnemccarthy.com"
+  },
+  {
+    "tier": 3,
+    "name": "Denise Monteforte",
+    "brokerage": "Realty Executives (North Scottsdale)",
+    "phone": "480-694-3949",
+    "email": "",
+    "website": "realtyexecutives.com"
+  },
+  {
+    "tier": 3,
+    "name": "Grant Almquist",
+    "brokerage": "Russ Lyon Sotheby's International Realty",
+    "phone": "602-615-2799",
+    "email": "grant.almquist@russlyon.com",
+    "website": "grantalmquist.realtor"
+  },
+  {
+    "tier": 3,
+    "name": "Heather MacLean",
+    "brokerage": "Compass – The MacLean Team",
+    "phone": "602-840-2060",
+    "email": "",
+    "website": "compass.com"
+  },
+  {
+    "tier": 3,
+    "name": "Jean Michel Edery",
+    "brokerage": "Russ Lyon Sotheby's – Jean Michel & Associates",
+    "phone": "480-287-5200",
+    "email": "",
+    "website": "russlyon.com/agent-profile/michel-edery-8777143"
+  },
+  {
+    "tier": 3,
+    "name": "Jean Ransdell",
+    "brokerage": "Russ Lyon Sotheby's International Realty",
+    "phone": "480-294-3257",
+    "email": "Jean@JRansdell.com",
+    "website": "arizonaluxuryrealty.com"
+  },
+  {
+    "tier": 3,
+    "name": "Joe Bushong",
+    "brokerage": "Russ Lyon Sotheby's International Realty",
+    "phone": "602-770-6733",
+    "email": "",
+    "website": "russlyon.com/agent-profile/joe-bushong-7350866"
+  },
+  {
+    "tier": 3,
+    "name": "Kristy Ryan",
+    "brokerage": "RE/MAX Fine Properties",
+    "phone": "480-688-2429",
+    "email": "kristyryan@remax.net",
+    "website": "kristyryan.com"
+  },
+  {
+    "tier": 3,
+    "name": "Lisa Brown",
+    "brokerage": "HomeSmart – Arcadia",
+    "phone": "602-339-3567",
+    "email": "lisabrownazhomes@gmail.com",
+    "website": "homesmart.com"
+  },
+  {
+    "tier": 3,
+    "name": "Pamela Torgrimson",
+    "brokerage": "RETSY (Forbes Global Properties)",
+    "phone": "602-803-6904",
+    "email": "pam@shesellsscottsdale.com",
+    "website": "shesellsscottsdale.com"
+  },
+  {
+    "tier": 3,
+    "name": "Patricia Garrity",
+    "brokerage": "Russ Lyon Sotheby's International Realty",
+    "phone": "480-287-5200",
+    "email": "",
+    "website": "patriciagarrityhomes.com"
+  },
+  {
+    "tier": 3,
+    "name": "Peggy Young",
+    "brokerage": "RE/MAX Fine Properties",
+    "phone": "480-241-1040",
+    "email": "",
+    "website": "peggyyoungrealty.com"
+  },
+  {
+    "tier": 3,
+    "name": "Rebecca Hidalgo Rains",
+    "brokerage": "Integrity All Star Realty",
+    "phone": "480-726-1616",
+    "email": "team@integrityallstars.com",
+    "website": "integrityallstars.com"
+  },
+  {
+    "tier": 3,
+    "name": "Rick Beck",
+    "brokerage": "The Agency Scottsdale",
+    "phone": "310-432-6450",
+    "email": "rick@rickbeckrealestate.com",
+    "website": "theagencyre.com"
+  },
+  {
+    "tier": 3,
+    "name": "Scott & Debbie Jarson",
+    "brokerage": "azarchitecture / Jarson & Jarson Real Estate",
+    "phone": "480-254-7510",
+    "email": "scott@azarchitecture.com",
+    "website": "azarchitecture.com"
+  },
+  {
+    "tier": 3,
+    "name": "Shannon Gillette",
+    "brokerage": "Real Broker – Gillette Group",
+    "phone": "480-518-6885",
+    "email": "shannon@gillette-group.com",
+    "website": "gillettegroupaz.com"
+  },
+  {
+    "tier": 3,
+    "name": "Stacy Dragos",
+    "brokerage": "Century 21 Toma Partners",
+    "phone": "623-910-2218",
+    "email": "stacy@tomapartners.com",
+    "website": "stacydragos.com"
+  },
+  {
+    "tier": 3,
+    "name": "Susan Seiber",
+    "brokerage": "Cactus Living AZ",
+    "phone": "",
+    "email": "",
+    "website": "cactuslivingaz.com"
+  },
+  {
+    "tier": 4,
+    "name": "Aimee Nairn",
+    "brokerage": "Compass – LAUNCH",
+    "phone": "",
+    "email": "",
+    "website": "aimeenairn.com"
+  },
+  {
+    "tier": 4,
+    "name": "Alison Guelker",
+    "brokerage": "Walt Danley / Christie's Int'l RE",
+    "phone": "",
+    "email": "",
+    "website": "guelkergroup.com"
+  },
+  {
+    "tier": 4,
+    "name": "Alli Dubberly",
+    "brokerage": "eXp Realty – Bridge Real Estate",
+    "phone": "",
+    "email": "",
+    "website": "allidubb.com"
+  },
+  {
+    "tier": 4,
+    "name": "Anthony Celaya",
+    "brokerage": "The Brokery",
+    "phone": "",
+    "email": "",
+    "website": "anthonyazrealtor.com"
+  },
+  {
+    "tier": 4,
+    "name": "Brandon Rogeness",
+    "brokerage": "West Desert Group / W and Partners",
+    "phone": "",
+    "email": "",
+    "website": "phoenixmag.com"
+  },
+  {
+    "tier": 4,
+    "name": "Chris Altman",
+    "brokerage": "Keller Williams Arizona Realty (Managing Broker)",
+    "phone": "",
+    "email": "",
+    "website": "kwarizona.com"
+  },
+  {
+    "tier": 4,
+    "name": "DeAnna Nelson",
+    "brokerage": "Unknown / Broker-Owner",
+    "phone": "",
+    "email": "",
+    "website": "myeasyhomesearch.com"
+  },
+  {
+    "tier": 4,
+    "name": "Debbie Pontikas",
+    "brokerage": "The Brokery / RETSY",
+    "phone": "",
+    "email": "",
+    "website": "debbiepontikas.thebrokery.com"
+  },
+  {
+    "tier": 4,
+    "name": "Ginny Wright",
+    "brokerage": "Realty ONE Group – The Wright Team AZ",
+    "phone": "",
+    "email": "",
+    "website": "thewrightteamaz.com"
+  },
+  {
+    "tier": 4,
+    "name": "Jen Gillham",
+    "brokerage": "Goddes Homes",
+    "phone": "",
+    "email": "",
+    "website": "goddeshomes.com"
+  },
+  {
+    "tier": 4,
+    "name": "Jeremy Moore",
+    "brokerage": "Compass",
+    "phone": "",
+    "email": "",
+    "website": "compass.com"
+  },
+  {
+    "tier": 4,
+    "name": "Joshua Shaver",
+    "brokerage": "Russ Lyon Sotheby's International Realty",
+    "phone": "",
+    "email": "",
+    "website": "russlyon.com"
+  },
+  {
+    "tier": 4,
+    "name": "Kelly Griffin Porter",
+    "brokerage": "RE/MAX Fine Properties",
+    "phone": "",
+    "email": "",
+    "website": "kellygriffinporter.com"
+  },
+  {
+    "tier": 4,
+    "name": "Laura Jewett",
+    "brokerage": "Inspired Living / Platinum Living Realty",
+    "phone": "",
+    "email": "",
+    "website": "azinspiredliving.com"
+  },
+  {
+    "tier": 4,
+    "name": "Meg Mara",
+    "brokerage": "Compass – LAUNCH Scottsdale",
+    "phone": "",
+    "email": "",
+    "website": "megmara.com"
+  },
+  {
+    "tier": 4,
+    "name": "Shelly Lane",
+    "brokerage": "Compass – Cronin-Lane Realty Group",
+    "phone": "",
+    "email": "",
+    "website": "sellingnorthcentral.com"
+  },
+  {
+    "tier": 4,
+    "name": "Tiffany Pettit",
+    "brokerage": "W and Partners / West Desert Group",
+    "phone": "",
+    "email": "",
+    "website": "westdesertgroup.com"
+  },
+  {
+    "tier": 4,
+    "name": "Tim Alderson",
+    "brokerage": "Compass (formerly Launch Real Estate)",
+    "phone": "",
+    "email": "",
+    "website": "compass.com"
+  },
+  {
+    "tier": 4,
+    "name": "Tranatta Adeyanju",
+    "brokerage": "eXp Realty – The Penrose Team",
+    "phone": "",
+    "email": "",
+    "website": "phoenixmag.com"
+  }
+]</script>
+<script id="investor-data" type="application/json">
+[]
+</script>
+
+<!-- ── EMAIL MODAL ── -->
+<div class="modal-overlay" id="emailModal">
+  <div class="modal">
+    <h2>Compose Outreach Email</h2>
+    <h3 id="modalSubtitle"></h3>
+    <div class="template-row" id="templateRow">
+      <button class="tpl-btn active" id="tpl0" onclick="setTemplate(0)">Initial Outreach</button>
+      <button class="tpl-btn" id="tpl1" onclick="setTemplate(1)">Day 3 Follow-Up</button>
+      <button class="tpl-btn" id="tpl2" onclick="setTemplate(2)">Day 7 Final Touch</button>
+    </div>
+    <div class="modal-field">
+      <label>To</label>
+      <input type="text" id="modalTo" readonly>
+    </div>
+    <div class="modal-field">
+      <label>Subject</label>
+      <input type="text" id="modalSubject">
+    </div>
+    <div class="modal-field">
+      <label>Email Body (edit as needed)</label>
+      <textarea id="modalBody"></textarea>
+    </div>
+    <div class="modal-note">
+      Send from <strong>marketing@evolutionaccelerator.co</strong>.
+      Click <strong>Mark as Sent</strong> to update the pipeline after sending.
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="closeEmailModal()">Close</button>
+      <button class="btn btn-copper" id="copyBtn" onclick="copyEmail()">Copy Email Body</button>
+      <button class="btn btn-teal" onclick="markSentFromModal()">Mark as Sent</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── ADD AGENT MODAL ── -->
+<div class="modal-overlay" id="addAgentModal">
+  <div class="modal narrow">
+    <h2>Add New Agent</h2>
+    <h3>Saved to your CRM and persists between sessions.</h3>
+    <div class="modal-field">
+      <label>Full Name *</label>
+      <input type="text" id="newAgentName" placeholder="e.g. Jane Smith">
+    </div>
+    <div class="field-row">
+      <div class="modal-field">
+        <label>Tier *</label>
+        <select id="newAgentTier">
+          <option value="1">Tier 1 -- Elite ($100M+)</option>
+          <option value="2" selected>Tier 2 -- High Producer</option>
+          <option value="3">Tier 3 -- Established</option>
+          <option value="4">Tier 4 -- Active Professional</option>
+        </select>
+      </div>
+      <div class="modal-field">
+        <label>Phone</label>
+        <input type="text" id="newAgentPhone" placeholder="480-555-0100">
+      </div>
+    </div>
+    <div class="modal-field">
+      <label>Brokerage</label>
+      <input type="text" id="newAgentBrokerage" placeholder="e.g. Compass">
+    </div>
+    <div class="field-row">
+      <div class="modal-field">
+        <label>Email</label>
+        <input type="text" id="newAgentEmail" placeholder="agent@brokerage.com">
+      </div>
+      <div class="modal-field">
+        <label>Website</label>
+        <input type="text" id="newAgentWebsite" placeholder="agentsite.com">
+      </div>
+    </div>
+    <div class="error-msg" id="addAgentError">Please enter a name.</div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="closeAddAgentModal()">Cancel</button>
+      <button class="btn btn-green" onclick="saveNewAgent()">Add Agent</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── ADD INVESTOR MODAL ── -->
+<div class="modal-overlay" id="addInvestorModal">
+  <div class="modal narrow">
+    <h2>Add Minerva Fund Contact</h2>
+    <h3>Add an LP, co-investor, or deal partner to your pipeline.</h3>
+    <div class="modal-field">
+      <label>Firm / Name *</label>
+      <input type="text" id="newInvName" placeholder="e.g. John Smith or Acme Family Office">
+    </div>
+    <div class="field-row">
+      <div class="modal-field">
+        <label>Type</label>
+        <select id="newInvType">
+          <option value="LP Investor">LP Investor</option>
+          <option value="Co-Investor">Co-Investor</option>
+          <option value="Family Office">Family Office</option>
+          <option value="High Net Worth">High Net Worth Individual</option>
+          <option value="Real Estate Operator">Real Estate Operator</option>
+          <option value="Angel Investor">Angel Investor</option>
+          <option value="Other">Other</option>
+        </select>
+      </div>
+      <div class="modal-field">
+        <label>Phone</label>
+        <input type="text" id="newInvPhone" placeholder="480-555-0100">
+      </div>
+    </div>
+    <div class="modal-field">
+      <label>Focus / Thesis</label>
+      <input type="text" id="newInvFocus" placeholder="e.g. PropTech / Real Estate">
+    </div>
+    <div class="modal-field">
+      <label>Contact Person</label>
+      <input type="text" id="newInvContact" placeholder="e.g. John Smith, Partner">
+    </div>
+    <div class="field-row">
+      <div class="modal-field">
+        <label>Email</label>
+        <input type="text" id="newInvEmail" placeholder="partner@fund.com">
+      </div>
+      <div class="modal-field">
+        <label>Website</label>
+        <input type="text" id="newInvWebsite" placeholder="fund.com">
+      </div>
+    </div>
+    <div class="error-msg" id="addInvError">Please enter a firm name.</div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="closeAddInvestorModal()">Cancel</button>
+      <button class="btn btn-teal" onclick="saveNewInvestor()">Add Investor</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── CONFIRM MODAL ── -->
+<div class="confirm-modal" id="confirmModal">
+  <div class="confirm-box">
+    <h3 id="confirmTitle">Confirm</h3>
+    <p id="confirmMsg"></p>
+    <div class="btn-row">
+      <button class="btn btn-outline" onclick="closeConfirm()">Cancel</button>
+      <button class="btn btn-red" id="confirmOkBtn">OK</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── TAB BAR ── -->
+<div class="tab-bar">
+  <div class="tab-left">
+    <div class="tab-title">
+      <h1>EVOLUTION ACCELERATOR // OUTREACH CRM</h1>
+      <p>Greater Phoenix Real Estate &amp; Minerva Fund Pipeline</p>
+    </div>
+    <div class="tab-divider"></div>
+    <button class="tab-btn active-agent" id="tabAgentBtn" onclick="switchTab('agent')">Agents</button>
+    <button class="tab-btn" id="tabInvestorBtn" onclick="switchTab('investor')">Minerva Fund</button>
+  </div>
+  <div class="tab-right" id="tabRight"><strong>84 Agents</strong></div>
+</div>
+
+<!-- ══ AGENT SECTION ══ -->
+<div id="agentSection">
+  <div class="stats-bar" id="agentStatsBar"></div>
+  <div class="pipeline-bar" id="agentPipelineBar"></div>
+  <div class="followup-bar hidden" id="followupBar"></div>
+  <div class="tier-legend">
+    <span style="font-size:11px;color:var(--mgray);margin-right:4px">Tiers:</span>
+    <div class="legend-item"><div class="legend-badge tier-1">T1</div><span>Elite Luxury ($100M+) &mdash; 15</span></div>
+    <div class="legend-item"><div class="legend-badge tier-2">T2</div><span>High Producers ($20M&ndash;$99M) &mdash; 29</span></div>
+    <div class="legend-item"><div class="legend-badge tier-3">T3</div><span>Established (likely $10M+) &mdash; 21</span></div>
+    <div class="legend-item"><div class="legend-badge tier-4">T4</div><span>Active Professionals &mdash; 19</span></div>
+  </div>
+  <div class="controls">
+    <input type="text" id="agentSearch" placeholder="Search name or brokerage..." oninput="renderAgents()">
+    <select id="agentTierFilter" onchange="renderAgents()">
+      <option value="0">All Tiers</option>
+      <option value="1">Tier 1 -- Elite</option>
+      <option value="2">Tier 2 -- High Producers</option>
+      <option value="3">Tier 3 -- Established</option>
+      <option value="4">Tier 4 -- Active</option>
+    </select>
+    <select id="agentStatusFilter" onchange="renderAgents()">
+      <option value="">All Statuses</option>
+      <option value="none">No Contact</option>
+      <option value="sent">Email Sent</option>
+      <option value="replied">Replied</option>
+      <option value="booked">Call Booked</option>
+      <option value="converted">Converted</option>
+      <option value="skip">Skip</option>
+    </select>
+    <select id="agentContactFilter" onchange="renderAgents()">
+      <option value="">All Contact Info</option>
+      <option value="no_email">Missing Email</option>
+      <option value="no_phone">Missing Phone</option>
+      <option value="no_both">Missing Both</option>
+    </select>
+    <select id="agentFollowupFilter" onchange="renderAgents()">
+      <option value="">All Follow-Ups</option>
+      <option value="due">Day 3 Follow-Up Due</option>
+      <option value="urgent">Day 7 Final Touch Due</option>
+    </select>
+    <span class="count-label">Showing <strong id="agentCount">84</strong></span>
+    <div class="controls-right">
+      <button class="btn btn-green" onclick="openAddAgentModal()">+ Add Agent</button>
+      <button class="btn btn-copper" onclick="exportCSV('agent')">Export CSV</button>
+      <button class="btn btn-outline" onclick="openResetConfirm('agent')">Reset</button>
+    </div>
+  </div>
+  <div class="grid-wrap"><div class="grid" id="agentGrid"></div></div>
+</div>
+
+<!-- ══ INVESTOR SECTION ══ -->
+<div id="investorSection" class="hidden">
+  <div style="background:#0A1A0A;border-bottom:2px solid #1A3A1A;padding:14px 24px;">
+    <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:8px;">
+      <span style="font-size:14px;font-weight:700;color:var(--green);letter-spacing:0.5px">MINERVA FUND</span>
+      <span style="font-size:11px;color:var(--mgray)">Evolution Accelerator</span>
+      <a href="https://www.evolutionaccelerator.co/p/minervafund" target="_blank"
+         style="font-size:11px;color:var(--teal);text-decoration:none;font-weight:600;border:1px solid var(--teal);border-radius:5px;padding:3px 10px;margin-left:4px;">
+        View Fund Page
+      </a>
+    </div>
+    <div style="display:flex;gap:24px;flex-wrap:wrap;">
+      <div style="font-size:11px;color:var(--mgray);max-width:480px;line-height:1.6;">
+        Early-stage VC focused on <strong style="color:var(--sand)">women and minority-led companies</strong>, regionally and nationally.
+        Investments of <strong style="color:var(--sand)">$25K&ndash;$150K per deal</strong>.
+        Minimum <strong style="color:var(--sand)">$10K/quarter</strong> for 4 quarters, then adjustable.
+        <strong style="color:var(--sand)">2% management fee</strong> (yr 1&ndash;10) &bull; <strong style="color:var(--sand)">20% carry</strong>.
+        Blind pool &mdash; fast deployment. Fund leads: Alexander Chompff, Rachel Zillner, Anne Descalzo, Amy Wister.
+      </div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:flex-start;">
+        <div style="background:#111;border:1px solid #1A3A1A;border-radius:6px;padding:6px 12px;text-align:center;">
+          <div style="font-size:15px;font-weight:700;color:var(--green)">$10K</div>
+          <div style="font-size:9px;color:var(--mgray);margin-top:2px">Min. Quarterly</div>
+        </div>
+        <div style="background:#111;border:1px solid #1A3A1A;border-radius:6px;padding:6px 12px;text-align:center;">
+          <div style="font-size:15px;font-weight:700;color:var(--green)">4 Qtrs</div>
+          <div style="font-size:9px;color:var(--mgray);margin-top:2px">Min. Period</div>
+        </div>
+        <div style="background:#111;border:1px solid #1A3A1A;border-radius:6px;padding:6px 12px;text-align:center;">
+          <div style="font-size:15px;font-weight:700;color:var(--green)">2% / 20%</div>
+          <div style="font-size:9px;color:var(--mgray);margin-top:2px">Mgmt Fee / Carry</div>
+        </div>
+        <div style="background:#111;border:1px solid #1A3A1A;border-radius:6px;padding:6px 12px;text-align:center;">
+          <div style="font-size:15px;font-weight:700;color:var(--green)">Apr 1, 2026</div>
+          <div style="font-size:9px;color:var(--mgray);margin-top:2px">Subscription Start</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="stats-bar" id="invStatsBar"></div>
+  <div class="pipeline-bar" id="invPipelineBar"></div>
+  <div class="controls">
+    <input type="text" id="invSearch" placeholder="Search firm or contact..." oninput="renderInvestors()">
+    <select id="invTypeFilter" onchange="renderInvestors()">
+      <option value="">All Types</option>
+      <option value="LP Investor">LP Investor</option>
+      <option value="Co-Investor">Co-Investor</option>
+      <option value="Family Office">Family Office</option>
+      <option value="High Net Worth">High Net Worth Individual</option>
+      <option value="Real Estate Operator">Real Estate Operator</option>
+      <option value="Angel Investor">Angel Investor</option>
+    </select>
+    <select id="invStatusFilter" onchange="renderInvestors()">
+      <option value="">All Statuses</option>
+      <option value="none">No Contact</option>
+      <option value="intro">Intro Sent</option>
+      <option value="deck">Deck Sent</option>
+      <option value="meeting">Meeting Booked</option>
+      <option value="dd">Due Diligence</option>
+      <option value="closed">Invested / Closed</option>
+      <option value="pass">Passed</option>
+    </select>
+    <span class="count-label">Showing <strong id="invCount">0</strong></span>
+    <div class="controls-right">
+      <button class="btn btn-teal" onclick="openAddInvestorModal()">+ Add Contact</button>
+      <button class="btn btn-copper" onclick="exportCSV('investor')">Export CSV</button>
+      <button class="btn btn-outline" onclick="openResetConfirm('investor')">Reset</button>
+    </div>
+  </div>
+  <div class="grid-wrap"><div class="grid" id="invGrid"></div></div>
+</div>
+
+<script>
+// ── DATA ──────────────────────────────────────────────────────────────────
+var BASE_AGENTS    = JSON.parse(document.getElementById("agent-data").textContent);
+var BASE_INVESTORS = JSON.parse(document.getElementById("investor-data").textContent);
+var AG_KEY  = "ea_agents_v3";
+var AG_CKEY = "ea_agents_custom_v3";
+var IN_KEY  = "ea_inv_v1";
+var IN_CKEY = "ea_inv_custom_v1";
+
+var agents    = [];
+var investors = [];
+var currentTab = "agent";
+var currentModalIdx = -1;
+var currentModalType = "agent";
+var currentTemplate = 0;
+var pendingConfirmFn = null;
+
+var AGENT_STATUS_LABELS = {
+  "none":"No Contact","sent":"Email Sent","replied":"Replied",
+  "booked":"Call Booked","converted":"Converted","skip":"Skip"
+};
+var INV_STATUS_LABELS = {
+  "none":"No Contact","intro":"Intro Sent","deck":"Deck Sent",
+  "meeting":"Meeting Booked","dd":"Due Diligence","closed":"Invested","pass":"Passed"
+};
+var AGENT_STATUS_COLORS = {
+  "none":"#333333","sent":"#2AACBF","replied":"#4E9160",
+  "booked":"#C87530","converted":"#F0DDBA","skip":"#A09278"
+};
+var INV_STATUS_COLORS = {
+  "none":"#333333","intro":"#2AACBF","deck":"#8B5CF6",
+  "meeting":"#F59E0B","dd":"#C87530","closed":"#F0DDBA","pass":"#A09278"
+};
+
+var MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+var MONTH_MAP = {Jan:0,Feb:1,Mar:2,Apr:3,May:4,Jun:5,Jul:6,Aug:7,Sep:8,Oct:9,Nov:10,Dec:11};
+
+// ── LOAD / SAVE ───────────────────────────────────────────────────────────
+function loadData() {
+  var as = null, ac = [], is = null, ic = [];
+  try {
+    as = localStorage.getItem(AG_KEY);
+    var acr = localStorage.getItem(AG_CKEY); if (acr) ac = JSON.parse(acr);
+    is = localStorage.getItem(IN_KEY);
+    var icr = localStorage.getItem(IN_CKEY); if (icr) ic = JSON.parse(icr);
+  } catch(e) {}
+
+  var asMap = {};
+  if (as) { var p = JSON.parse(as); for (var i=0;i<p.length;i++) asMap[i]=p[i]; }
+  agents = BASE_AGENTS.map(function(b,i) {
+    var s = asMap[i] || {};
+    return { tier:b.tier, name:b.name, brokerage:b.brokerage,
+             phone:b.phone, email:b.email, website:b.website,
+             status:s.status||"none", notes:s.notes||"", sent:s.sent||"",
+             sentTs:s.sentTs||0, isCustom:false };
+  });
+  for (var j=0;j<ac.length;j++) agents.push(ac[j]);
+
+  var isMap = {};
+  if (is) { var p2=JSON.parse(is); for (var k=0;k<p2.length;k++) isMap[k]=p2[k]; }
+  investors = BASE_INVESTORS.map(function(b,i) {
+    var s = isMap[i] || {};
+    return { name:b.name, type:b.type, focus:b.focus,
+             contact:b.contact, email:b.email, phone:b.phone, website:b.website,
+             status:s.status||"none", notes:s.notes||"", sent:s.sent||"",
+             sentTs:s.sentTs||0, isCustom:false };
+  });
+  for (var m=0;m<ic.length;m++) investors.push(ic[m]);
+}
+
+function saveAgents() {
+  var min = agents.slice(0, BASE_AGENTS.length).map(function(a) {
+    return {status:a.status,notes:a.notes,sent:a.sent,sentTs:a.sentTs};
+  });
+  var cust = agents.filter(function(a){return a.isCustom;});
+  try { localStorage.setItem(AG_KEY,JSON.stringify(min)); localStorage.setItem(AG_CKEY,JSON.stringify(cust)); } catch(e) {}
+}
+
+function saveInvestors() {
+  var min = investors.slice(0, BASE_INVESTORS.length).map(function(a) {
+    return {status:a.status,notes:a.notes,sent:a.sent,sentTs:a.sentTs};
+  });
+  var cust = investors.filter(function(a){return a.isCustom;});
+  try { localStorage.setItem(IN_KEY,JSON.stringify(min)); localStorage.setItem(IN_CKEY,JSON.stringify(cust)); } catch(e) {}
+}
+
+// ── FOLLOW-UP HELPERS ────────────────────────────────────────────────────
+function daysSinceSent(a) {
+  if (a.status !== "sent" && a.status !== "intro") return -1;
+  if (a.sentTs) {
+    return Math.floor((Date.now() - a.sentTs) / 86400000);
+  }
+  if (!a.sent) return -1;
+  var parts = a.sent.split(" ");
+  if (parts.length < 2) return -1;
+  var mon = MONTH_MAP[parts[0]];
+  var day = parseInt(parts[1]);
+  if (isNaN(day) || mon === undefined) return -1;
+  var now = new Date();
+  var sentDate = new Date(now.getFullYear(), mon, day);
+  if (sentDate > now) sentDate.setFullYear(now.getFullYear() - 1);
+  return Math.floor((now - sentDate) / 86400000);
+}
+
+function getFuClass(a) {
+  var d = daysSinceSent(a);
+  if (d >= 7) return "day7";
+  if (d >= 3) return "day3";
+  return "";
+}
+
+// ── TAB SWITCH ───────────────────────────────────────────────────────────
+function switchTab(tab) {
+  currentTab = tab;
+  if (tab === "agent") {
+    document.getElementById("agentSection").classList.remove("hidden");
+    document.getElementById("investorSection").classList.add("hidden");
+    document.getElementById("tabAgentBtn").className = "tab-btn active-agent";
+    document.getElementById("tabInvestorBtn").className = "tab-btn";
+    renderAgents();
+  } else {
+    document.getElementById("agentSection").classList.add("hidden");
+    document.getElementById("investorSection").classList.remove("hidden");
+    document.getElementById("tabAgentBtn").className = "tab-btn";
+    document.getElementById("tabInvestorBtn").className = "tab-btn active-investor";
+    renderInvestors();
+  }
+}
+
+// ── AGENT STATS ──────────────────────────────────────────────────────────
+function updateAgentStats() {
+  var t1=0,t2=0,t3=0,t4=0;
+  var sc={none:0,sent:0,replied:0,booked:0,converted:0,skip:0};
+  var fu3=0, fu7=0;
+  for (var i=0;i<agents.length;i++) {
+    var a=agents[i];
+    if(a.tier===1)t1++; else if(a.tier===2)t2++; else if(a.tier===3)t3++; else t4++;
+    if(sc[a.status]!==undefined)sc[a.status]++;
+    var fc = getFuClass(a);
+    if(fc==="day7")fu7++; else if(fc==="day3")fu3++;
+  }
+  var total=agents.length;
+  document.getElementById("tabRight").innerHTML = "<strong>" + total + " Agents</strong>";
+  document.getElementById("agentStatsBar").innerHTML =
+    '<div class="stat-chip"><strong>'+total+'</strong>Total</div>' +
+    '<div class="stat-chip"><strong>'+t1+'</strong>Tier 1</div>' +
+    '<div class="stat-chip teal"><strong>'+t2+'</strong>Tier 2</div>' +
+    '<div class="stat-chip green"><strong>'+t3+'</strong>Tier 3</div>' +
+    '<div class="stat-chip purple"><strong>'+t4+'</strong>Tier 4</div>' +
+    '<div class="stat-chip" style="margin-left:8px"><strong>'+sc.none+'</strong>No Contact</div>' +
+    '<div class="stat-chip teal"><strong>'+sc.sent+'</strong>Sent</div>' +
+    '<div class="stat-chip green"><strong>'+sc.replied+'</strong>Replied</div>' +
+    '<div class="stat-chip"><strong style="color:var(--copper)">'+sc.booked+'</strong>Call Booked</div>' +
+    '<div class="stat-chip sand"><strong>'+sc.converted+'</strong>Converted</div>' +
+    (fu3+fu7 > 0 ? '<div class="stat-chip gold"><strong>'+(fu3+fu7)+'</strong>Follow-Ups Due</div>' : '');
+
+  var stages=["none","sent","replied","booked","converted"];
+  var ph='<span style="font-size:11px;color:var(--mgray);margin-right:4px">Pipeline:</span>';
+  for(var k=0;k<stages.length;k++){
+    var s=stages[k];
+    var pct=total>0?Math.round(sc[s]/total*100):0;
+    ph+='<div class="pipe-item"><div class="pipe-dot" style="background:'+AGENT_STATUS_COLORS[s]+'"></div><span class="pipe-label">'+sc[s]+'</span><span>'+AGENT_STATUS_LABELS[s]+' ('+pct+'%)</span></div>';
+    if(k<stages.length-1)ph+='<span class="pipe-sep">/</span>';
+  }
+  document.getElementById("agentPipelineBar").innerHTML = ph;
+
+  var fuBar = document.getElementById("followupBar");
+  if(fu3+fu7 > 0) {
+    fuBar.classList.remove("hidden");
+    var fuHtml = '<span style="font-size:11px;color:var(--mgray);margin-right:6px">Follow-Ups:</span>';
+    if(fu7>0) fuHtml+='<span class="fu-chip red" onclick="filterFollowup(\'urgent\')">'+fu7+' Day 7 Final Touch Overdue -- click to filter</span>';
+    if(fu3>0) fuHtml+='<span class="fu-chip orange" onclick="filterFollowup(\'due\')">'+fu3+' Day 3 Follow-Up Due -- click to filter</span>';
+    fuBar.innerHTML = fuHtml;
+  } else {
+    fuBar.classList.add("hidden");
+  }
+}
+
+function filterFollowup(val) {
+  document.getElementById("agentFollowupFilter").value = val;
+  renderAgents();
+}
+
+// ── INVESTOR STATS ────────────────────────────────────────────────────────
+function updateInvestorStats() {
+  var sc={none:0,intro:0,deck:0,meeting:0,dd:0,closed:0,pass:0};
+  var types={};
+  for(var i=0;i<investors.length;i++){
+    var inv=investors[i];
+    if(sc[inv.status]!==undefined)sc[inv.status]++;
+    types[inv.type]=(types[inv.type]||0)+1;
+  }
+  var total=investors.length;
+  document.getElementById("tabRight").innerHTML = "<strong>" + total + " Minerva Fund Contacts</strong>";
+  document.getElementById("invStatsBar").innerHTML =
+    '<div class="stat-chip"><strong>'+total+'</strong>Total</div>' +
+    '<div class="stat-chip"><strong>'+sc.none+'</strong>No Contact</div>' +
+    '<div class="stat-chip teal"><strong>'+sc.intro+'</strong>Intro Sent</div>' +
+    '<div class="stat-chip purple"><strong>'+sc.deck+'</strong>Deck Sent</div>' +
+    '<div class="stat-chip gold"><strong>'+sc.meeting+'</strong>Meeting</div>' +
+    '<div class="stat-chip"><strong style="color:var(--copper)">'+sc.dd+'</strong>Due Diligence</div>' +
+    '<div class="stat-chip sand"><strong>'+sc.closed+'</strong>Invested</div>';
+
+  var stages=["none","intro","deck","meeting","dd","closed"];
+  var ph='<span style="font-size:11px;color:var(--mgray);margin-right:4px">Pipeline:</span>';
+  for(var k=0;k<stages.length;k++){
+    var s=stages[k];
+    var pct=total>0?Math.round(sc[s]/total*100):0;
+    ph+='<div class="pipe-item"><div class="pipe-dot" style="background:'+INV_STATUS_COLORS[s]+'"></div><span class="pipe-label">'+sc[s]+'</span><span>'+INV_STATUS_LABELS[s]+' ('+pct+'%)</span></div>';
+    if(k<stages.length-1)ph+='<span class="pipe-sep">/</span>';
+  }
+  document.getElementById("invPipelineBar").innerHTML = ph;
+}
+
+// ── RENDER AGENTS ─────────────────────────────────────────────────────────
+function renderAgents() {
+  var search  = document.getElementById("agentSearch").value.toLowerCase();
+  var tierF   = parseInt(document.getElementById("agentTierFilter").value)||0;
+  var statF   = document.getElementById("agentStatusFilter").value;
+  var contF   = document.getElementById("agentContactFilter").value;
+  var fuF     = document.getElementById("agentFollowupFilter").value;
+  var filtered=[];
+  for(var i=0;i<agents.length;i++){
+    var a=agents[i];
+    if(tierF!==0 && a.tier!==tierF) continue;
+    if(statF && a.status!==statF) continue;
+    if(contF==="no_email" && a.email) continue;
+    if(contF==="no_phone" && a.phone) continue;
+    if(contF==="no_both" && (a.email||a.phone)) continue;
+    if(fuF==="due" && getFuClass(a)!=="day3") continue;
+    if(fuF==="urgent" && getFuClass(a)!=="day7") continue;
+    if(search){var nm=a.name.toLowerCase(),br=a.brokerage.toLowerCase(); if(nm.indexOf(search)<0&&br.indexOf(search)<0)continue;}
+    filtered.push(i);
+  }
+  document.getElementById("agentCount").textContent = filtered.length;
+  var grid=document.getElementById("agentGrid");
+  if(filtered.length===0){grid.innerHTML='<div class="no-results">No agents match your filters.</div>'; updateAgentStats(); return;}
+  var html="";
+  for(var j=0;j<filtered.length;j++) html+=buildAgentCard(agents[filtered[j]],filtered[j]);
+  grid.innerHTML=html;
+  updateAgentStats();
+}
+
+// ── RENDER INVESTORS ──────────────────────────────────────────────────────
+function renderInvestors() {
+  var search  = document.getElementById("invSearch").value.toLowerCase();
+  var typeF   = document.getElementById("invTypeFilter").value;
+  var statF   = document.getElementById("invStatusFilter").value;
+  var filtered=[];
+  for(var i=0;i<investors.length;i++){
+    var inv=investors[i];
+    if(typeF && inv.type!==typeF) continue;
+    if(statF && inv.status!==statF) continue;
+    if(search){
+      var nm=inv.name.toLowerCase(),fc=inv.focus.toLowerCase(),ct=(inv.contact||"").toLowerCase();
+      if(nm.indexOf(search)<0&&fc.indexOf(search)<0&&ct.indexOf(search)<0) continue;
+    }
+    filtered.push(i);
+  }
+  document.getElementById("invCount").textContent = filtered.length;
+  var grid=document.getElementById("invGrid");
+  if(filtered.length===0){grid.innerHTML='<div class="no-results">No investors match your filters.</div>'; updateInvestorStats(); return;}
+  var html="";
+  for(var j=0;j<filtered.length;j++) html+=buildInvestorCard(investors[filtered[j]],filtered[j]);
+  grid.innerHTML=html;
+  updateInvestorStats();
+}
+
+function escH(s){
+  return String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+}
+
+// ── BUILD AGENT CARD ──────────────────────────────────────────────────────
+function buildAgentCard(a, idx) {
+  var tn=(a.tier>=1&&a.tier<=4)?a.tier:"X";
+  var col=AGENT_STATUS_COLORS[a.status];
+  var fuClass=getFuClass(a);
+  var fuBadge="";
+  if(fuClass==="day3") fuBadge='<span class="fu-badge day3">DAY 3 FOLLOW-UP</span>';
+  if(fuClass==="day7") fuBadge='<span class="fu-badge day7">DAY 7 FINAL TOUCH</span>';
+  var cardClass="card"+(a.isCustom?" is-custom":"")+(fuClass===" day3"?" fu-due":fuClass==="day7"?" fu-urgent":"");
+  if(fuClass==="day3") cardClass="card"+(a.isCustom?" is-custom":"")+" fu-due";
+  if(fuClass==="day7") cardClass="card"+(a.isCustom?" is-custom":"")+" fu-urgent";
+
+  var phRow=a.phone?'<div class="contact-item"><a href="tel:'+escH(a.phone)+'">'+escH(a.phone)+'</a></div>':'<div class="contact-item" style="opacity:0.4">No phone</div>';
+  var emRow=a.email?'<div class="contact-item"><a href="mailto:'+escH(a.email)+'">'+escH(a.email)+'</a></div>':'<div class="contact-item" style="opacity:0.4">No email</div>';
+  var wRow=a.website?'<div class="contact-item"><a href="http://'+escH(a.website)+'" target="_blank">'+escH(a.website)+'</a></div>':"";
+
+  var statKeys=["none","sent","replied","booked","converted","skip"];
+  var opts="";
+  for(var k=0;k<statKeys.length;k++){var key=statKeys[k]; opts+='<option value="'+key+'"'+(a.status===key?" selected":"")+">"+AGENT_STATUS_LABELS[key]+"</option>";}
+
+  var delBtn=a.isCustom?'<button class="act-btn del-btn" onclick="deleteItem(\'agent\','+idx+')">Remove</button>':"";
+  var custBadge=a.isCustom?'<span class="custom-tag">custom</span>':"";
+  var days=daysSinceSent(a);
+  var daysHint=days>0&&a.status==="sent"?'<span style="font-size:9px;color:var(--mgray);margin-left:6px">'+days+'d ago</span>':"";
+
+  return '<div class="'+cardClass+'" id="ac-'+idx+'">' +
+    '<div class="status-indicator" style="background:'+col+'"></div>' +
+    '<div class="card-top"><div class="tier-badge tier-'+tn+'">T'+a.tier+'</div>' +
+    '<div><div class="card-name">'+escH(a.name)+custBadge+fuBadge+daysHint+'</div>' +
+    '<div class="card-sub">'+escH(a.brokerage)+'</div></div></div>' +
+    '<div class="card-contact">'+phRow+emRow+'</div>' +
+    (wRow?'<div class="card-contact">'+wRow+'</div>':"") +
+    '<div class="status-row"><span class="status-label">Status:</span>' +
+    '<select class="status-select s-'+a.status+'" onchange="updateStatus(\'agent\','+idx+',this)">'+opts+'</select></div>' +
+    '<div class="sent-row"><span class="sent-label">Sent date:</span>' +
+    '<input class="sent-input" type="text" placeholder="e.g. Mar 9" value="'+escH(a.sent)+'" onchange="updateSent(\'agent\','+idx+',this.value)" oninput="updateSent(\'agent\','+idx+',this.value)"></div>' +
+    '<div class="notes-wrap"><textarea class="notes-input" placeholder="Notes..." onchange="updateNotes(\'agent\','+idx+',this.value)" oninput="updateNotes(\'agent\','+idx+',this.value)">'+escH(a.notes)+'</textarea></div>' +
+    '<div class="card-actions">' +
+    '<button class="act-btn email-btn'+(a.email?"":" dimmed")+'"'+(a.email?' onclick="openEmailModal(\'agent\','+idx+')"':"")+'>Email</button>' +
+    '<button class="act-btn phone-btn'+(a.phone?"":" dimmed")+'"'+(a.phone?' onclick="callItem(\'agent\','+idx+')"':"")+'>Call</button>' +
+    '<button class="act-btn web-btn'+(a.website?"":" dimmed")+'"'+(a.website?' onclick="openWeb(\'agent\','+idx+')"':"")+'>Website</button>' +
+    delBtn+'</div></div>';
+}
+
+// ── BUILD INVESTOR CARD ───────────────────────────────────────────────────
+function buildInvestorCard(inv, idx) {
+  var col=INV_STATUS_COLORS[inv.status];
+  var emRow=inv.email?'<div class="contact-item"><a href="mailto:'+escH(inv.email)+'">'+escH(inv.email)+'</a></div>':'<div class="contact-item" style="opacity:0.4">No email</div>';
+  var wRow=inv.website?'<div class="contact-item"><a href="http://'+escH(inv.website)+'" target="_blank">'+escH(inv.website)+'</a></div>':"";
+  var phRow=inv.phone?'<div class="contact-item"><a href="tel:'+escH(inv.phone)+'">'+escH(inv.phone)+'</a></div>':"";
+
+  var statKeys=["none","intro","deck","meeting","dd","closed","pass"];
+  var opts="";
+  for(var k=0;k<statKeys.length;k++){var key=statKeys[k]; opts+='<option value="'+key+'"'+(inv.status===key?" selected":"")+">"+INV_STATUS_LABELS[key]+"</option>";}
+
+  var delBtn=inv.isCustom?'<button class="act-btn del-btn" onclick="deleteItem(\'investor\','+idx+')">Remove</button>':"";
+  var custBadge=inv.isCustom?'<span class="custom-tag">custom</span>':"";
+
+  return '<div class="card'+(inv.isCustom?" is-custom":"")+'" id="ic-'+idx+'">' +
+    '<div class="status-indicator" style="background:'+col+'"></div>' +
+    '<div class="card-top"><div class="tier-badge tier-vc">VC</div>' +
+    '<div><div class="card-name">'+escH(inv.name)+custBadge+'</div>' +
+    '<div class="card-sub">'+escH(inv.type)+' &nbsp;&bull;&nbsp; '+escH(inv.focus)+'</div>' +
+    (inv.contact?'<div class="card-sub" style="margin-top:2px;color:var(--sand)">'+escH(inv.contact)+'</div>':"")+
+    '</div></div>' +
+    '<div class="card-contact">'+emRow+phRow+'</div>' +
+    (wRow?'<div class="card-contact">'+wRow+'</div>':"") +
+    '<div class="status-row"><span class="status-label">Stage:</span>' +
+    '<select class="status-select s-'+inv.status+'" onchange="updateStatus(\'investor\','+idx+',this)">'+opts+'</select></div>' +
+    '<div class="sent-row"><span class="sent-label">Last contact:</span>' +
+    '<input class="sent-input" type="text" placeholder="e.g. Mar 9" value="'+escH(inv.sent)+'" onchange="updateSent(\'investor\','+idx+',this.value)" oninput="updateSent(\'investor\','+idx+',this.value)"></div>' +
+    '<div class="notes-wrap"><textarea class="notes-input" placeholder="Notes, fund size, thesis, next steps..." onchange="updateNotes(\'investor\','+idx+',this.value)" oninput="updateNotes(\'investor\','+idx+',this.value)">'+escH(inv.notes)+'</textarea></div>' +
+    '<div class="card-actions">' +
+    '<button class="act-btn email-btn'+(inv.email?"":" dimmed")+'"'+(inv.email?' onclick="openEmailModal(\'investor\','+idx+')"':"")+'>Email</button>' +
+    '<button class="act-btn phone-btn'+(inv.phone?"":" dimmed")+'"'+(inv.phone?' onclick="callItem(\'investor\','+idx+')"':"")+'>Call</button>' +
+    '<button class="act-btn web-btn'+(inv.website?"":" dimmed")+'"'+(inv.website?' onclick="openWeb(\'investor\','+idx+')"':"")+'>Website</button>' +
+    delBtn+'</div></div>';
+}
+
+// ── UPDATE HANDLERS ───────────────────────────────────────────────────────
+function callItem(type,idx){
+  var item=(type==="agent"?agents:investors)[idx];
+  if(item.phone) window.location.href="tel:"+item.phone;
+}
+function openWeb(type,idx){
+  var item=(type==="agent"?agents:investors)[idx];
+  if(item.website) window.open("http://"+item.website,"_blank");
+}
+
+function updateStatus(type,idx,sel){
+  var arr=(type==="agent"?agents:investors);
+  arr[idx].status=sel.value;
+  sel.className="status-select s-"+sel.value;
+  var ind=document.querySelector("#"+(type==="agent"?"ac":"ic")+"-"+idx+" .status-indicator");
+  if(ind) ind.style.background=(type==="agent"?AGENT_STATUS_COLORS:INV_STATUS_COLORS)[sel.value];
+  if(type==="agent")saveAgents(); else saveInvestors();
+  if(type==="agent")updateAgentStats(); else updateInvestorStats();
+}
+
+function updateNotes(type,idx,val){
+  (type==="agent"?agents:investors)[idx].notes=val;
+  if(type==="agent")saveAgents(); else saveInvestors();
+}
+
+function updateSent(type,idx,val){
+  (type==="agent"?agents:investors)[idx].sent=val;
+  if(type==="agent")saveAgents(); else saveInvestors();
+}
+
+// ── EMAIL MODAL ───────────────────────────────────────────────────────────
+function openEmailModal(type,idx){
+  currentModalIdx=idx; currentModalType=type; currentTemplate=0;
+  var item=(type==="agent"?agents:investors)[idx];
+  var name=item.name; var email=item.email||"";
+  document.getElementById("modalSubtitle").textContent = "To: "+name+(item.brokerage?"  |  "+item.brokerage:item.type?"  |  "+item.type:"");
+  document.getElementById("modalTo").value = email;
+
+  var tplRow=document.getElementById("templateRow");
+  if(type==="investor"){
+    tplRow.innerHTML='<button class="tpl-btn active" id="tpl0" onclick="setTemplate(0)">Initial Outreach</button><button class="tpl-btn" id="tpl1" onclick="setTemplate(1)">Follow-Up</button><button class="tpl-btn" id="tpl2" onclick="setTemplate(2)">Final Touch</button>';
+  } else {
+    tplRow.innerHTML='<button class="tpl-btn active" id="tpl0" onclick="setTemplate(0)">Initial Outreach</button><button class="tpl-btn" id="tpl1" onclick="setTemplate(1)">Day 3 Follow-Up</button><button class="tpl-btn" id="tpl2" onclick="setTemplate(2)">Day 7 Final Touch</button>';
+  }
+
+  setTemplate(0);
+  document.getElementById("emailModal").classList.add("open");
+}
+
+function setTemplate(n){
+  currentTemplate=n;
+  var btns=document.getElementById("templateRow").querySelectorAll(".tpl-btn");
+  for(var i=0;i<btns.length;i++) btns[i].classList.toggle("active",i===n);
+  var item=(currentModalType==="agent"?agents:investors)[currentModalIdx];
+  var body=""; var subj="";
+  if(currentModalType==="agent"){
+    var first=getFirstName(item.name);
+    if(n===0){
+      subj="Your Morning Edge -- Completely Customized for You";
+      body="Hi "+first+",\n\nMy name is Sean -- I work with Evolution Accelerator here in the Phoenix area.\n\nI wanted to reach out about something we built specifically for top producers in the Valley called The Signal.\n\nIt is a free daily briefing -- delivered to your inbox every morning at 7am -- and you set 100% of the parameters yourself. Luxury listings, specific zip codes, developer activity, competitor moves, market news. Whatever matters to your business, you decide.\n\nWe built it for agents who are already winning and want to stay three steps ahead.\n\nIf it sounds like something worth 60 seconds of your time, just reply ACCESS and tell us what you want tracked. We will set it up and have it in your inbox tomorrow morning.\n\nNo pitch. No commitment. Just your edge.\n\n-- Sean\nEvolution Accelerator\nmarketing@evolutionaccelerator.co";
+    } else if(n===1){
+      subj="Re: Your Morning Edge -- Quick Follow-Up";
+      body="Hi "+first+",\n\nJust following up on my note from a few days ago about The Signal.\n\nI know your inbox is full -- I will keep this short. A handful of top Phoenix agents started using it this week and the feedback has been exactly what we hoped for.\n\nIf you want to see what lands in your inbox, just reply ACCESS. We will set it up same day.\n\n-- Sean\nEvolution Accelerator\nmarketing@evolutionaccelerator.co";
+    } else {
+      subj="Last note -- The Signal";
+      body="Hi "+first+",\n\nLast touch -- I promise.\n\nThe Signal is still free, still takes 60 seconds to set up, and still delivers every morning at 7am with exactly the market intel you ask for.\n\nIf the timing is not right, no worries at all. If you want in, just reply ACCESS.\n\nEither way, wishing you a strong close to the month.\n\n-- Sean\nEvolution Accelerator\nmarketing@evolutionaccelerator.co";
+    }
+  } else {
+    var invName=item.name;
+    if(n===0){
+      subj="Minerva Fund -- Early-Stage VC for Overlooked Founders";
+      body="Hi,\n\nMy name is Sean -- I run the Minerva Fund through Evolution Accelerator here in Phoenix.\n\nMinerva is an early-stage venture capital fund with a specific focus: we invest in women- and minority-led companies that are consistently passed over by conventional capital. That oversight creates real asymmetric opportunity for investors who are paying attention.\n\nHere is how it works:\n\nInstead of locking capital in for four years, investors subscribe on a quarterly basis. The minimum is $10,000 per quarter with a 4-quarter minimum period. After that, you can raise or lower your commitment each quarter with no long-term lock-in. We charge a 2% annual management fee and 20% carry -- standard structure, flexible access.\n\nWe operate as a blind pool, which means we can move fast when the right deal appears. Investments range from $25,000 to $150,000 per company. We handle the deal flow, the diligence, and the deployment.\n\nSubscriptions open April 1, 2026.\n\nMore details: https://www.evolutionaccelerator.co/p/minervafund\n\nWould you have 20 minutes this week?\n\n-- Sean\nEvolution Accelerator / Minerva Fund\nmarketing@evolutionaccelerator.co";
+    } else if(n===1){
+      subj="Minerva Fund -- Follow-Up";
+      body="Hi,\n\nFollowing up on my note about the Minerva Fund.\n\nThe numbers, plainly:\n\n- Minimum commitment: $10,000 per quarter\n- Minimum period: 4 quarters\n- After that: raise or lower each quarter, no lock-in\n- Management fee: 2% per year (years 1-10)\n- Carry: 20% fund-wide (not per-deal)\n- Deal size: $25K to $150K per company\n- Focus: women- and minority-led early-stage companies\n- Subscriptions open: April 1, 2026\n\nWe are a blind pool, which means we move fast. You get a diversified portfolio across deals you would not otherwise have access to.\n\nFund page: https://www.evolutionaccelerator.co/p/minervafund\n\nHappy to walk through it on a call. What does your week look like?\n\n-- Sean\nEvolution Accelerator / Minerva Fund\nmarketing@evolutionaccelerator.co";
+    } else {
+      subj="Minerva Fund -- One Last Note";
+      body="Hi,\n\nLast note from me on this.\n\nMinerva Fund is built on a simple belief: women and minorities are consistently passed over for early-stage investment, and that is a mistake that creates real opportunity for investors who are paying attention.\n\nWe deploy capital quickly into a diversified portfolio of early-stage companies -- $25K to $150K per deal. Investors commit quarterly, no long-term lock-in, and can adjust their level each period. It is designed to let smart capital move fast without the friction of a traditional fund structure.\n\nIf that sounds interesting, I am available any morning this week. Just reply with a time.\n\nFund page: https://www.evolutionaccelerator.co/p/minervafund\n\n-- Sean\nEvolution Accelerator / Minerva Fund\nmarketing@evolutionaccelerator.co";
+    }
+  }
+  document.getElementById("modalSubject").value=subj;
+  document.getElementById("modalBody").value=body;
+}
+
+function getFirstName(name){
+  var parts=name.split(" ");
+  var f=parts[0];
+  if(f==="The"&&parts.length>1)f=parts[1];
+  if(name.indexOf("&")>=0){var lp=name.split("&")[0].trim().split(" ");f=lp[lp.length-1];}
+  return f;
+}
+
+function closeEmailModal(){ document.getElementById("emailModal").classList.remove("open"); currentModalIdx=-1; }
+
+function copyEmail(){
+  var body=document.getElementById("modalBody").value;
+  var btn=document.getElementById("copyBtn");
+  navigator.clipboard.writeText(body).then(function(){
+    btn.textContent="Copied!"; setTimeout(function(){btn.textContent="Copy Email Body";},2000);
+  }).catch(function(){
+    document.getElementById("modalBody").select(); document.execCommand("copy");
+    btn.textContent="Copied!"; setTimeout(function(){btn.textContent="Copy Email Body";},2000);
+  });
+}
+
+function markSentFromModal(){
+  if(currentModalIdx<0)return;
+  var today=new Date();
+  var ds=MONTHS[today.getMonth()]+" "+today.getDate();
+  var arr=(currentModalType==="agent"?agents:investors);
+  arr[currentModalIdx].status=(currentModalType==="agent"?"sent":"intro");
+  arr[currentModalIdx].sent=ds;
+  arr[currentModalIdx].sentTs=Date.now();
+  if(currentModalType==="agent")saveAgents(); else saveInvestors();
+  closeEmailModal();
+  if(currentModalType==="agent")renderAgents(); else renderInvestors();
+}
+
+// ── ADD AGENT ─────────────────────────────────────────────────────────────
+function openAddAgentModal(){
+  ["newAgentName","newAgentBrokerage","newAgentPhone","newAgentEmail","newAgentWebsite"].forEach(function(id){document.getElementById(id).value="";});
+  document.getElementById("newAgentTier").value="2";
+  document.getElementById("addAgentError").classList.remove("show");
+  document.getElementById("addAgentModal").classList.add("open");
+  setTimeout(function(){document.getElementById("newAgentName").focus();},100);
+}
+function closeAddAgentModal(){ document.getElementById("addAgentModal").classList.remove("open"); }
+function saveNewAgent(){
+  var name=document.getElementById("newAgentName").value.trim();
+  if(!name){document.getElementById("addAgentError").classList.add("show");return;}
+  document.getElementById("addAgentError").classList.remove("show");
+  agents.push({tier:parseInt(document.getElementById("newAgentTier").value)||2,name:name,
+    brokerage:document.getElementById("newAgentBrokerage").value.trim(),
+    phone:document.getElementById("newAgentPhone").value.trim(),
+    email:document.getElementById("newAgentEmail").value.trim(),
+    website:document.getElementById("newAgentWebsite").value.trim().replace(/^https?:\/\//,""),
+    status:"none",notes:"",sent:"",sentTs:0,isCustom:true});
+  saveAgents(); closeAddAgentModal(); renderAgents();
+}
+
+// ── ADD INVESTOR ──────────────────────────────────────────────────────────
+function openAddInvestorModal(){
+  ["newInvName","newInvFocus","newInvContact","newInvPhone","newInvEmail","newInvWebsite"].forEach(function(id){document.getElementById(id).value="";});
+  document.getElementById("newInvType").value="VC Fund";
+  document.getElementById("addInvError").classList.remove("show");
+  document.getElementById("addInvestorModal").classList.add("open");
+  setTimeout(function(){document.getElementById("newInvName").focus();},100);
+}
+function closeAddInvestorModal(){ document.getElementById("addInvestorModal").classList.remove("open"); }
+function saveNewInvestor(){
+  var name=document.getElementById("newInvName").value.trim();
+  if(!name){document.getElementById("addInvError").classList.add("show");return;}
+  document.getElementById("addInvError").classList.remove("show");
+  investors.push({name:name,type:document.getElementById("newInvType").value,
+    focus:document.getElementById("newInvFocus").value.trim(),
+    contact:document.getElementById("newInvContact").value.trim(),
+    phone:document.getElementById("newInvPhone").value.trim(),
+    email:document.getElementById("newInvEmail").value.trim(),
+    website:document.getElementById("newInvWebsite").value.trim().replace(/^https?:\/\//,""),
+    status:"none",notes:"",sent:"",sentTs:0,isCustom:true});
+  saveInvestors(); closeAddInvestorModal(); renderInvestors();
+}
+
+// ── DELETE ────────────────────────────────────────────────────────────────
+function deleteItem(type,idx){
+  var arr=(type==="agent"?agents:investors);
+  openConfirm("Remove?","Remove "+arr[idx].name+" from the CRM? Cannot be undone.",function(){
+    arr.splice(idx,1);
+    if(type==="agent"){saveAgents();renderAgents();}else{saveInvestors();renderInvestors();}
+  });
+}
+
+// ── CONFIRM ───────────────────────────────────────────────────────────────
+function openConfirm(title,msg,fn){
+  pendingConfirmFn=fn;
+  document.getElementById("confirmTitle").textContent=title;
+  document.getElementById("confirmMsg").textContent=msg;
+  document.getElementById("confirmModal").classList.add("open");
+}
+function closeConfirm(){ document.getElementById("confirmModal").classList.remove("open"); pendingConfirmFn=null; }
+function runConfirm(){ if(pendingConfirmFn)pendingConfirmFn(); closeConfirm(); }
+
+function openResetConfirm(type){
+  openConfirm("Reset All "+( type==="agent"?"Agent":"Investor")+" Data?",
+    "Clears all status, notes, and dates for this pipeline. Custom entries will also be removed.",
+    function(){
+      if(type==="agent"){
+        for(var i=0;i<BASE_AGENTS.length;i++){agents[i].status="none";agents[i].notes="";agents[i].sent="";agents[i].sentTs=0;}
+        agents=agents.slice(0,BASE_AGENTS.length);
+        try{localStorage.removeItem(AG_KEY);localStorage.removeItem(AG_CKEY);}catch(e){}
+        renderAgents();
+      } else {
+        for(var i=0;i<BASE_INVESTORS.length;i++){investors[i].status="none";investors[i].notes="";investors[i].sent="";investors[i].sentTs=0;}
+        investors=investors.slice(0,BASE_INVESTORS.length);
+        try{localStorage.removeItem(IN_KEY);localStorage.removeItem(IN_CKEY);}catch(e){}
+        renderInvestors();
+      }
+    });
+}
+
+// ── EXPORT CSV ────────────────────────────────────────────────────────────
+function exportCSV(type){
+  var rows, filename;
+  if(type==="agent"){
+    rows=[["Tier","Name","Brokerage","Phone","Email","Website","Status","Sent Date","Notes","Custom"]];
+    for(var i=0;i<agents.length;i++){var a=agents[i];rows.push([a.tier,a.name,a.brokerage,a.phone,a.email,a.website,AGENT_STATUS_LABELS[a.status]||a.status,a.sent,a.notes,a.isCustom?"Yes":"No"]);}
+    filename="agent_outreach_crm.csv";
+  } else {
+    rows=[["Name","Type","Focus","Contact","Email","Phone","Website","Stage","Last Contact","Notes","Custom"]];
+    for(var i=0;i<investors.length;i++){var inv=investors[i];rows.push([inv.name,inv.type,inv.focus,inv.contact,inv.email,inv.phone,inv.website,INV_STATUS_LABELS[inv.status]||inv.status,inv.sent,inv.notes,inv.isCustom?"Yes":"No"]);}
+    filename="investor_crm.csv";
+  }
+  var csv=rows.map(function(r){return r.map(function(c){return '"'+String(c||"").replace(/"/g,'""')+'"';}).join(",");}).join("\n");
+  var blob=new Blob([csv],{type:"text/csv"});
+  var url=URL.createObjectURL(blob);
+  var link=document.createElement("a");
+  link.href=url;link.download=filename;link.click();
+  URL.revokeObjectURL(url);
+}
+
+// ── BACKDROP CLOSE ────────────────────────────────────────────────────────
+["emailModal","addAgentModal","addInvestorModal","confirmModal"].forEach(function(id){
+  document.getElementById(id).addEventListener("click",function(e){
+    if(e.target===this){
+      if(id==="emailModal")closeEmailModal();
+      else if(id==="addAgentModal")closeAddAgentModal();
+      else if(id==="addInvestorModal")closeAddInvestorModal();
+      else closeConfirm();
+    }
+  });
+});
+document.getElementById("confirmOkBtn").onclick = runConfirm;
+
+// ── INIT ──────────────────────────────────────────────────────────────────
+loadData();
+renderAgents();
+</script>
+</body>
+</html>
